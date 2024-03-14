@@ -31,8 +31,8 @@
             "ui_data": {
               "label": "data_ingestion.py",
               "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 24,
-              "y_pos": 465,
+              "x_pos": 23,
+              "y_pos": 458,
               "description": "Run Python script"
             }
           },
@@ -151,7 +151,7 @@
               "label": "model_upload.py",
               "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
               "x_pos": 1030,
-              "y_pos": 464,
+              "y_pos": 458,
               "description": "Run Python script"
             }
           },
@@ -214,7 +214,7 @@
               "label": "model_validation.py",
               "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
               "x_pos": 775,
-              "y_pos": 460,
+              "y_pos": 458,
               "description": "Run Python script"
             }
           },
@@ -276,8 +276,8 @@
             "ui_data": {
               "label": "model_training.py",
               "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 526,
-              "y_pos": 452,
+              "x_pos": 531,
+              "y_pos": 458,
               "description": "Run Python script"
             }
           },
