@@ -1,15 +1,16 @@
-import pandas as pd
-import numpy as np
-from numpy import save
+# import pandas as pd
+# import numpy as np
+# from numpy import save
 
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.impute import SimpleImputer
+# from sklearn.preprocessing import OneHotEncoder
+# from sklearn.impute import SimpleImputer
 
 
 def preprocess_data(data_folder='./data'):
     print('preprocessing data')
 
     df = pd.read_csv(f'{data_folder}/raw_data.csv')
+    print(df)
 
     df.dropna(subset=['RainTomorrow'], inplace=True)
 

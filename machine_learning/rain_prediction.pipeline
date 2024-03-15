@@ -9,253 +9,7 @@
       "id": "primary",
       "nodes": [
         {
-          "id": "6b06afd1-7fbe-4ee5-9cc8-84386d13cf08",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "component_parameters": {
-              "dependencies": [],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "data_ingestion.py",
-              "runtime_image": "quay.io/bnnlukaseviden/runtimes:rhoai-training-v0.0.3"
-            },
-            "label": "",
-            "ui_data": {
-              "label": "data_ingestion.py",
-              "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 23,
-              "y_pos": 458,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              }
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "cc455bd8-c7a2-4dcd-b558-06671f741e8f",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "label": "",
-            "component_parameters": {
-              "dependencies": [],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "data_preprocessing.py"
-            },
-            "ui_data": {
-              "label": "data_preprocessing.py",
-              "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 286,
-              "y_pos": 459,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "b020b13a-27b6-4913-a788-c3a86e7a253f",
-                  "node_id_ref": "6b06afd1-7fbe-4ee5-9cc8-84386d13cf08",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "640b0674-56ca-454d-85d2-25225b46d120",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "label": "",
-            "component_parameters": {
-              "dependencies": [],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "model_upload.py"
-            },
-            "ui_data": {
-              "label": "model_upload.py",
-              "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 1030,
-              "y_pos": 458,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "7ff0fc94-d14c-428c-9e02-38e99daab950",
-                  "node_id_ref": "3f26d421-42cb-4b38-b8f5-9fad6170e1b9",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "3f26d421-42cb-4b38-b8f5-9fad6170e1b9",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "label": "",
-            "component_parameters": {
-              "dependencies": [],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "model_validation.py"
-            },
-            "ui_data": {
-              "label": "model_validation.py",
-              "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 775,
-              "y_pos": 458,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "f6fdf848-3847-4446-9a07-8ea59a8642f7",
-                  "node_id_ref": "dcaa460d-772a-404d-b2d6-bb044f81009f",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "dcaa460d-772a-404d-b2d6-bb044f81009f",
+          "id": "44842baa-b8c1-4885-9e0f-dc7efd92bb46",
           "type": "execution_node",
           "op": "execute-python-node",
           "app_data": {
@@ -275,9 +29,9 @@
             },
             "ui_data": {
               "label": "model_training.py",
-              "image": "/notebook/rain-prediction/rainprediction/static/elyra/python.svg",
-              "x_pos": 531,
-              "y_pos": 458,
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 615,
+              "y_pos": 294,
               "description": "Run Python script"
             }
           },
@@ -295,11 +49,258 @@
               },
               "links": [
                 {
-                  "id": "eef180cc-80ba-4e16-9076-bac10c3c2e72",
-                  "node_id_ref": "cc455bd8-c7a2-4dcd-b558-06671f741e8f",
+                  "id": "3a231366-a0a8-4db7-9825-47d51c72ee4b",
+                  "node_id_ref": "a4398675-24aa-4ebc-bc3e-71e5ea2e8287",
                   "port_id_ref": "outPort"
                 }
               ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "5f072dfc-8b06-4b89-a660-70ea70f2a794",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "label": "",
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "model_validation.py"
+            },
+            "ui_data": {
+              "label": "model_validation.py",
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 837,
+              "y_pos": 291,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "063aba21-55d6-4053-8252-9226815e788b",
+                  "node_id_ref": "44842baa-b8c1-4885-9e0f-dc7efd92bb46",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "79f377cc-a707-4157-ad99-2b3157766c6a",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "label": "",
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "model_upload.py"
+            },
+            "ui_data": {
+              "label": "model_upload.py",
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 1048,
+              "y_pos": 292,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "1b607104-55b6-441f-bb6f-d1dd8c6a5f2a",
+                  "node_id_ref": "5f072dfc-8b06-4b89-a660-70ea70f2a794",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "a4398675-24aa-4ebc-bc3e-71e5ea2e8287",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "data_preprocessing.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "data_preprocessing.py",
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 350.0000305175781,
+              "y_pos": 296,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "04e967d2-a205-483d-ae6b-3a9dde08cdbd",
+                  "node_id_ref": "7094c5f9-4f59-4b81-9cd4-1b9421c1587f",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "7094c5f9-4f59-4b81-9cd4-1b9421c1587f",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [
+                "/data/raw_data.csv"
+              ],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "data_ingestion.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "data_ingestion.py",
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 86,
+              "y_pos": 298,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              }
             }
           ],
           "outputs": [
@@ -329,14 +330,46 @@
           "runtime": "Data Science Pipelines",
           "pipeline_defaults": {
             "kubernetes_shared_mem_size": {},
+            "mounted_volumes": [],
             "kubernetes_pod_annotations": [],
             "kubernetes_pod_labels": [],
-            "mounted_volumes": [],
             "kubernetes_tolerations": [],
-            "kubernetes_secrets": [],
             "env_vars": [],
+            "kubernetes_secrets": [
+              {
+                "env_var": "AWS_S3_ENDPOINT",
+                "name": "secret-4mqvtl",
+                "key": "AWS_S3_ENDPOINT"
+              },
+              {
+                "env_var": "AWS_ACCESS_KEY_ID",
+                "name": "secret-4mqvtl",
+                "key": "AWS_ACCESS_KEY_ID"
+              },
+              {
+                "env_var": "AWS_S3_BUCKET",
+                "name": "secret-4mqvtl",
+                "key": "AWS_S3_BUCKET"
+              },
+              {
+                "env_var": "AWS_SECRET_ACCESS_KEY",
+                "name": "secret-4mqvtl",
+                "key": "AWS_SECRET_ACCESS_KEY"
+              }
+            ],
             "runtime_image": "quay.io/bnnlukaseviden/runtimes:rhoai-training-v0.0.3"
-          }
+          },
+          "pipeline_parameters": [
+            {
+              "name": "data_folder",
+              "description": "",
+              "default_value": {
+                "type": "String",
+                "value": "./data"
+              },
+              "required": false
+            }
+          ]
         }
       },
       "runtime_ref": ""

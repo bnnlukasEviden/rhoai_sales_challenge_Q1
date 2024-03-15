@@ -2,7 +2,6 @@ from os import environ
 
 import boto3
 
-
 def ingest_data(data_object_name='', data_folder='./data'):
     print('Commencing data ingestion.')
 
@@ -10,7 +9,9 @@ def ingest_data(data_object_name='', data_folder='./data'):
     s3_access_key = environ.get('AWS_ACCESS_KEY_ID')
     s3_secret_key = environ.get('AWS_SECRET_ACCESS_KEY')
     s3_bucket_name = environ.get('AWS_S3_BUCKET')
-    data_object_name = "weatherAUS.csv"
+    data_object_name = "raw_data.csv"
+    
+    print(s3_endpoint_url)
 
     print(f'Downloading data "{data_object_name}" '
           f'from bucket "{s3_bucket_name}" '
