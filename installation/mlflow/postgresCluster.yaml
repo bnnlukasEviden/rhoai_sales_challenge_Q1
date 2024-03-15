@@ -1,0 +1,34 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: mlflow-server
+  namespace: redhat-ods-applications
+spec:
+  backups:
+    pgbackrest:
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 35Gi
+  instances:
+    - dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 35Gi
+      name: instance1
+      replicas: 1
+  openshift: true
+  patroni:
+    dynamicConfiguration:
+      postgresql:
+        pg_hba:
+          - hostnossl all all all md5
+  port: 5432
+  postgresVersion: 14

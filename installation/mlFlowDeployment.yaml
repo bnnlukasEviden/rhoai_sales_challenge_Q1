@@ -1,0 +1,161 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mlflow-server
+  namespace: redhat-ods-applications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: mlflow-server
+      app.kubernetes.io/name: mlflow-server
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: mlflow-server
+        app.kubernetes.io/name: mlflow-server
+    spec:
+      restartPolicy: Always
+      serviceAccountName: mlflow-server
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      containers:
+        - resources: {}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mlflow-server
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: mlflow-server
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: mlflow-server
+              scheme: HTTP
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: MLFLOW_S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mlflow-server
+                  key: BUCKET_NAME
+            - name: MLFLOW_S3_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: mlflow-server
+                  key: S3_ENDPOINT_URL
+            - name: AWS_CA_BUNDLE
+              value: /run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+            - name: PGBOUNCE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server-pguser-mlflow-server
+                  key: host
+            - name: PGBOUNCE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server-pguser-mlflow-server
+                  key: port
+            - name: MLFLOW_DATABASE_HOST
+              value: '$(PGBOUNCE_HOST):$(PGBOUNCE_PORT)'
+            - name: MLFLOW_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server-pguser-mlflow-server
+                  key: dbname
+            - name: MLFLOW_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server-pguser-mlflow-server
+                  key: password
+            - name: MLFLOW_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-server-pguser-mlflow-server
+                  key: user
+            - name: MLFLOW_PORT
+              value: '8080'
+          securityContext: {}
+          ports:
+            - name: mlflow-server
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          terminationMessagePolicy: File
+          image: 'quay.io/troyer/mlflow-server:2.10'
+        - resources: {}
+          readinessProbe:
+            httpGet:
+              path: /oauth/healthz
+              port: 8443
+              scheme: HTTPS
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: oauth-proxy
+          livenessProbe:
+            httpGet:
+              path: /oauth/healthz
+              port: 8443
+              scheme: HTTPS
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - name: oauth-proxy
+              containerPort: 8443
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: oauth-tls
+              mountPath: /etc/tls/private
+          terminationMessagePolicy: File
+          image: 'registry.redhat.io/openshift4/ose-oauth-proxy:v4.12'
+          args:
+            - '--https-address=:8443'
+            - '--provider=openshift'
+            - >-
+              --openshift-sar={"namespace":"redhat-ods-applications","resource":"services","resourceName":"mlflow-server","verb":"get"}
+            - '--openshift-service-account=mlflow-server'
+            - '--upstream=http://localhost:8080'
+            - '--tls-cert=/etc/tls/private/tls.crt'
+            - '--tls-key=/etc/tls/private/tls.key'
+            - '--cookie-secret=SECRET'
+      serviceAccount: mlflow-server
+      volumes:
+        - name: oauth-tls
+          secret:
+            secretName: mlflow-server-tls
+            defaultMode: 420
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
