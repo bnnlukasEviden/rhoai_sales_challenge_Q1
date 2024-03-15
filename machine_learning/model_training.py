@@ -9,6 +9,8 @@ from torch import nn
 import copy
 import torch.optim as optim
 import tqdm
+import datetime
+import mlflow
 
 from sklearn.model_selection import StratifiedKFold
 
@@ -48,8 +50,6 @@ class Deep(nn.Module):
 
 
 def model_train(model, X_train, y_train, X_val, y_val):
-    model.cuda()
-
     # loss function and optimizer
     loss_fn = nn.BCELoss()  # binary cross entropy
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
@@ -100,49 +100,47 @@ def model_train(model, X_train, y_train, X_val, y_val):
     return best_acc, model
 
 
-def train_x_val(data_folder='./data'):
-#     device = "cuda" if torch.cuda.is_available() else "cpu"
-#     print(f'training the model on {device}')
+def train_x_val():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f'training the model on {device}')
 
-#     X = pd.DataFrame(load(f"{data_folder}/X.npy"))
-#     y = pd.DataFrame(load(f"{data_folder}/y.npy"))
+    X = pd.DataFrame(load("X.npy"))
+    y = pd.DataFrame(load("y.npy"))
 
-#     split_number = int(environ.get('split_number', '2'))
-#     sss = StratifiedKFold(n_splits=split_number, random_state=None, shuffle=False)
+    split_number = int(environ.get('split_number', '2'))
+    sss = StratifiedKFold(n_splits=split_number, random_state=None, shuffle=False)
 
-#     best_acc_wide = - np.inf   # init to negative infinity
-#     best_model_wide = None
-#     best_acc_deep = - np.inf   # init to negative infinity
-#     best_model_deep = None
+    best_acc_deep = - np.inf   # init to negative infinity
+    best_model_deep = None
 
-#     for train_index, test_index in sss.split(X, y):
-#         Xtrain = X.iloc[train_index]
-#         Xtest = X.iloc[test_index]
-#         ytrain = y.iloc[train_index]
-#         ytest = y.iloc[test_index]
+    for train_index, test_index in sss.split(X, y):
+        Xtrain = X.iloc[train_index]
+        Xtest = X.iloc[test_index]
+        ytrain = y.iloc[train_index]
+        ytest = y.iloc[test_index]
 
-#         X_train_tensor = torch.tensor(Xtrain.values, dtype=torch.float32).to(device)
-#         y_train_tensor = torch.tensor(ytrain.values, dtype=torch.float32).to(device).reshape(-1,1)
-#         X_test_tensor = torch.tensor(Xtest.values, dtype=torch.float32).to(device)
-#         y_test_tensor = torch.tensor(ytest.values, dtype=torch.float32).to(device).reshape(-1, 1)
+        X_train_tensor = torch.tensor(Xtrain.values, dtype=torch.float32).to(device)
+        y_train_tensor = torch.tensor(ytrain.values, dtype=torch.float32).to(device).reshape(-1,1)
+        X_test_tensor = torch.tensor(Xtest.values, dtype=torch.float32).to(device)
+        y_test_tensor = torch.tensor(ytest.values, dtype=torch.float32).to(device).reshape(-1, 1)
 
-#         model_w = Wide()
-#         acc_wide, model_wide = model_train(model_w, X_train_tensor, y_train_tensor, X_test_tensor, y_test_tensor)
-#         if acc_wide > best_acc_wide:
-#             best_acc_wide = acc_wide
-#             best_model_wide = model_wide
-#         print("Accuracy (wide): %.2f" % acc_wide)
+        model_d = Deep()
+        acc_deep, model_deep = model_train(model_d, X_train_tensor, y_train_tensor, X_test_tensor, y_test_tensor)
+        if acc_deep > best_acc_deep:
+            best_acc_deep = acc_deep
+            best_model_deep = model_deep
+        print("Accuracy (deep): %.2f" % acc_deep)
 
-#         model_d = Deep()
-#         acc_deep, model_deep = model_train(model_d, X_train_tensor, y_train_tensor, X_test_tensor, y_test_tensor)
-#         if acc_deep > best_acc_deep:
-#             best_acc_deep = acc_deep
-#             best_model_deep = model_deep
-#         print("Accuracy (deep): %.2f" % acc_deep)
+    now = datetime.datetime.now()
+    date = now.strftime("%Y%m%d%H%M")
 
-#     torch.onnx.export(best_model_wide, torch.randn(363, 121, requires_grad=True).to(device), "./models/best_wide_model.onnx")
-#     torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "./models/best_deep_model.onnx")
+    mlflow.set_tracking_uri('https://mlflow-server-redhat-ods-applications.apps.io.mos-paas.de.eviden.com')
+    mlflow.set_experiment(f"torch_model")
+    with mlflow.start_run(run_name=f"torch_model-{date}") as run:
+        mlflow.pytorch.log_model(model, "torch_model")
+        
+    torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "best_deep_model.onnx")
 
 
 if __name__ == '__main__':
-    train_x_val(data_folder='./data')
+    train_x_val()

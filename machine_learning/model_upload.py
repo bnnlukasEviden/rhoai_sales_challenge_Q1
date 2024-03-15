@@ -12,20 +12,20 @@ s3_bucket_name = environ.get('AWS_S3_BUCKET')
 
 
 def upload_model(model_object_prefix='model', version=''):
-#     s3_client = _initialize_s3_client(
-#         s3_endpoint_url=s3_endpoint_url,
-#         s3_access_key=s3_access_key,
-#         s3_secret_key=s3_secret_key
-#     )
-#     model_object_name = _generate_model_name(
-#         model_object_prefix, version=version
-#     )
-#     _do_upload(s3_client, model_object_name)
+    s3_client = _initialize_s3_client(
+        s3_endpoint_url=s3_endpoint_url,
+        s3_access_key=s3_access_key,
+        s3_secret_key=s3_secret_key
+    )
+    model_object_name = _generate_model_name(
+        model_object_prefix, version=version
+    )
+    _do_upload(s3_client, model_object_name)
 
-#     model_object_name_latest = _generate_model_name(
-#         model_object_prefix, 'latest'
-#     )
-#     _do_upload(s3_client, model_object_name_latest)
+    model_object_name_latest = _generate_model_name(
+        model_object_prefix, 'latest'
+    )
+    _do_upload(s3_client, model_object_name_latest)
 
 
 def _initialize_s3_client(s3_endpoint_url, s3_access_key, s3_secret_key):
@@ -51,7 +51,7 @@ def _timestamp():
 def _do_upload(s3_client, object_name):
     print(f'uploading model to {object_name}')
     try:
-        s3_client.upload_file('./models/best_deep_model.onnx', s3_bucket_name, object_name)
+        s3_client.upload_file('best_deep_model.onnx', s3_bucket_name, object_name)
     except:
         print(f'S3 upload to bucket {s3_bucket_name} at {s3_endpoint_url} failed!')
         raise

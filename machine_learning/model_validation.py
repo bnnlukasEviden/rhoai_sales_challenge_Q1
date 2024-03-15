@@ -2,10 +2,10 @@ import onnx
 
 
 def validate_model():
-    # print('validating model using onnx model-checking')
-    # onnx_model = onnx.load("./models/best_deep_model.onnx")
-    # onnx.checker.check_model(onnx_model)
-    # print('model validated')
+    print('validating model using onnx model-checking')
+    onnx_model_deep = onnx.load("best_deep_model.onnx")
+    onnx.checker.check_model(onnx_model_deep)
+    print('models validated')
 
 
 if __name__ == '__main__':

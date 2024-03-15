@@ -1,15 +1,15 @@
-# import pandas as pd
-# import numpy as np
-# from numpy import save
+import pandas as pd
+import numpy as np
+from numpy import save
 
-# from sklearn.preprocessing import OneHotEncoder
-# from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.impute import SimpleImputer
 
 
-def preprocess_data(data_folder='./data'):
+def preprocess_data():
     print('preprocessing data')
 
-    df = pd.read_csv(f'{data_folder}/raw_data.csv')
+    df = pd.read_csv('raw_data.csv')
     print(df)
 
     df.dropna(subset=['RainTomorrow'], inplace=True)
@@ -46,9 +46,9 @@ def preprocess_data(data_folder='./data'):
     X = df.drop(columns=["target"])
     y = df["target"]
 
-    save(f"{data_folder}/X.npy", X)
-    save(f"{data_folder}/y.npy", y)
+    save("X.npy", X)
+    save("y.npy", y)
 
 
 if __name__ == '__main__':
-    preprocess_data(data_folder='./data/')
+    preprocess_data()

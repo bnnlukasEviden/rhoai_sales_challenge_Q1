@@ -51,7 +51,7 @@ def _timestamp():
 def _do_upload(s3_client, object_name):
     print(f'uploading model to {object_name}')
     try:
-        s3_client.upload_file('./models/best_deep_model.onnx', s3_bucket_name, object_name)
+        s3_client.upload_file('best_deep_model.onnx', s3_bucket_name, object_name)
     except:
         print(f'S3 upload to bucket {s3_bucket_name} at {s3_endpoint_url} failed!')
         raise

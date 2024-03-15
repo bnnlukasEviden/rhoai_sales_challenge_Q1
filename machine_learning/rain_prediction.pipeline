@@ -13,11 +13,12 @@
           "type": "execution_node",
           "op": "execute-python-node",
           "app_data": {
-            "label": "",
             "component_parameters": {
               "dependencies": [],
               "include_subdirectories": false,
-              "outputs": [],
+              "outputs": [
+                "best_deep_model.onnx"
+              ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
               "kubernetes_pod_labels": [],
@@ -27,6 +28,7 @@
               "mounted_volumes": [],
               "filename": "model_training.py"
             },
+            "label": "",
             "ui_data": {
               "label": "model_training.py",
               "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
@@ -205,7 +207,10 @@
             "component_parameters": {
               "dependencies": [],
               "include_subdirectories": false,
-              "outputs": [],
+              "outputs": [
+                "X.npy",
+                "y.npy"
+              ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
               "kubernetes_pod_labels": [],
@@ -269,7 +274,7 @@
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [
-                "/data/raw_data.csv"
+                "raw_data.csv"
               ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
@@ -330,46 +335,36 @@
           "runtime": "Data Science Pipelines",
           "pipeline_defaults": {
             "kubernetes_shared_mem_size": {},
-            "mounted_volumes": [],
-            "kubernetes_pod_annotations": [],
             "kubernetes_pod_labels": [],
+            "mounted_volumes": [],
             "kubernetes_tolerations": [],
+            "kubernetes_pod_annotations": [],
             "env_vars": [],
             "kubernetes_secrets": [
               {
                 "env_var": "AWS_S3_ENDPOINT",
-                "name": "secret-4mqvtl",
+                "name": " secret-zwhht1",
                 "key": "AWS_S3_ENDPOINT"
               },
               {
                 "env_var": "AWS_ACCESS_KEY_ID",
-                "name": "secret-4mqvtl",
+                "name": " secret-zwhht1",
                 "key": "AWS_ACCESS_KEY_ID"
               },
               {
                 "env_var": "AWS_S3_BUCKET",
-                "name": "secret-4mqvtl",
+                "name": " secret-zwhht1",
                 "key": "AWS_S3_BUCKET"
               },
               {
                 "env_var": "AWS_SECRET_ACCESS_KEY",
-                "name": "secret-4mqvtl",
+                "name": " secret-zwhht1",
                 "key": "AWS_SECRET_ACCESS_KEY"
               }
             ],
-            "runtime_image": "quay.io/bnnlukaseviden/runtimes:rhoai-training-v0.0.3"
+            "runtime_image": "quay.io/bnnlukaseviden/runtimes:sc_q1-v0.0.3"
           },
-          "pipeline_parameters": [
-            {
-              "name": "data_folder",
-              "description": "",
-              "default_value": {
-                "type": "String",
-                "value": "./data"
-              },
-              "required": false
-            }
-          ]
+          "pipeline_parameters": []
         }
       },
       "runtime_ref": ""
