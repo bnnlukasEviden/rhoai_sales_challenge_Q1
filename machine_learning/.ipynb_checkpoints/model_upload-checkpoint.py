@@ -3,15 +3,18 @@ from datetime import datetime
 
 from boto3 import client
 
-
-model_object_prefix = environ.get('model_object_prefix', 'best_deep_model')
 s3_endpoint_url = environ.get('AWS_S3_ENDPOINT')
 s3_access_key = environ.get('AWS_ACCESS_KEY_ID')
 s3_secret_key = environ.get('AWS_SECRET_ACCESS_KEY')
 s3_bucket_name = environ.get('AWS_S3_BUCKET')
 
+model_object_prefix = 'torch_model'
 
 def upload_model(model_object_prefix='model', version=''):
+    
+    with open("output.txt", "r") as file:
+        string_from_file = file.read()
+        
     s3_client = _initialize_s3_client(
         s3_endpoint_url=s3_endpoint_url,
         s3_access_key=s3_access_key,
@@ -22,10 +25,11 @@ def upload_model(model_object_prefix='model', version=''):
     )
     _do_upload(s3_client, model_object_name)
 
-    model_object_name_latest = _generate_model_name(
-        model_object_prefix, 'latest'
-    )
-    _do_upload(s3_client, model_object_name_latest)
+    if string_from_file == 'new_champion':   
+        model_object_name_champion = _generate_model_name(
+            model_object_prefix, 'champion'
+        )
+        _do_upload(s3_client, model_object_name_champion)
 
 
 def _initialize_s3_client(s3_endpoint_url, s3_access_key, s3_secret_key):
@@ -51,7 +55,7 @@ def _timestamp():
 def _do_upload(s3_client, object_name):
     print(f'uploading model to {object_name}')
     try:
-        s3_client.upload_file('best_deep_model.onnx', s3_bucket_name, object_name)
+        s3_client.upload_file('torch_model.onnx', s3_bucket_name, object_name)
     except:
         print(f'S3 upload to bucket {s3_bucket_name} at {s3_endpoint_url} failed!')
         raise
@@ -59,4 +63,4 @@ def _do_upload(s3_client, object_name):
 
 
 if __name__ == '__main__':
-    upload_model(model_object_prefix)
+    upload_model()

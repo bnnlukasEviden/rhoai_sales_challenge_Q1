@@ -14,10 +14,13 @@
           "op": "execute-python-node",
           "app_data": {
             "component_parameters": {
+              "pipeline_parameters": [
+                "mlflow_tracking_uri"
+              ],
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [
-                "best_deep_model.onnx"
+                "torch_model.onnx"
               ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
@@ -33,7 +36,7 @@
               "label": "model_training.py",
               "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
               "x_pos": 615,
-              "y_pos": 294,
+              "y_pos": 295,
               "description": "Run Python script"
             }
           },
@@ -78,7 +81,6 @@
           "type": "execution_node",
           "op": "execute-python-node",
           "app_data": {
-            "label": "",
             "component_parameters": {
               "dependencies": [],
               "include_subdirectories": false,
@@ -92,6 +94,7 @@
               "mounted_volumes": [],
               "filename": "model_validation.py"
             },
+            "label": "",
             "ui_data": {
               "label": "model_validation.py",
               "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
@@ -141,7 +144,6 @@
           "type": "execution_node",
           "op": "execute-python-node",
           "app_data": {
-            "label": "",
             "component_parameters": {
               "dependencies": [],
               "include_subdirectories": false,
@@ -155,11 +157,12 @@
               "mounted_volumes": [],
               "filename": "model_upload.py"
             },
+            "label": "",
             "ui_data": {
               "label": "model_upload.py",
               "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
-              "x_pos": 1048,
-              "y_pos": 292,
+              "x_pos": 1151,
+              "y_pos": 257,
               "description": "Run Python script"
             }
           },
@@ -177,8 +180,8 @@
               },
               "links": [
                 {
-                  "id": "1b607104-55b6-441f-bb6f-d1dd8c6a5f2a",
-                  "node_id_ref": "5f072dfc-8b06-4b89-a660-70ea70f2a794",
+                  "id": "6bab6eb8-3a5c-49f2-b4a3-4e6551b1adfc",
+                  "node_id_ref": "15771bb3-0fdd-42cc-9827-40b807e622a7",
                   "port_id_ref": "outPort"
                 }
               ]
@@ -208,8 +211,10 @@
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [
-                "X.npy",
-                "y.npy"
+                "X_train.npy",
+                "y_train.npy",
+                "X_eval.npy",
+                "y_eval.npy"
               ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
@@ -322,6 +327,74 @@
               }
             }
           ]
+        },
+        {
+          "id": "15771bb3-0fdd-42cc-9827-40b807e622a7",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "pipeline_parameters": [
+                "mlflow_tracking_uri"
+              ],
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [
+                "output.txt"
+              ],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "model_evaluation.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "model_evaluation.py",
+              "image": "/notebook/rain-prediction/rainpredictionworkbench/static/elyra/python.svg",
+              "x_pos": 981,
+              "y_pos": 153,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "3f4ceab0-7a7d-4305-81a3-93d6b81245c6",
+                  "node_id_ref": "5f072dfc-8b06-4b89-a660-70ea70f2a794",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
         }
       ],
       "app_data": {
@@ -360,11 +433,31 @@
                 "env_var": "AWS_SECRET_ACCESS_KEY",
                 "name": " secret-zwhht1",
                 "key": "AWS_SECRET_ACCESS_KEY"
+              },
+              {
+                "env_var": "TLS_CERTIFICATE",
+                "name": "mlflow-server-tls",
+                "key": "TLS_CERTIFICATE"
+              },
+              {
+                "env_var": "TLS_KEY",
+                "name": "mlflow-server-tls",
+                "key": "TLS_KEY"
               }
             ],
             "runtime_image": "quay.io/bnnlukaseviden/runtimes:sc_q1-v0.0.3"
           },
-          "pipeline_parameters": []
+          "pipeline_parameters": [
+            {
+              "name": "mlflow_tracking_uri",
+              "description": "",
+              "default_value": {
+                "type": "String",
+                "value": "http://mlflow-v4-redhat-ods-applications.apps.io.mos-paas.de.eviden.com"
+              },
+              "required": false
+            }
+          ]
         }
       },
       "runtime_ref": ""

@@ -2,6 +2,7 @@ from os import environ
 from numpy import load
 import pandas as pd
 import numpy as np
+import tempfile
 
 import onnx
 import torch
@@ -14,19 +15,10 @@ import mlflow
 
 from sklearn.model_selection import StratifiedKFold
 
-
-class Wide(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.hidden = nn.Linear(121, 363)
-        self.relu = nn.ReLU()
-        self.output = nn.Linear(363, 1)
-        self.sigmoid = nn.Sigmoid()
-
-    def forward(self, x):
-        x = self.relu(self.hidden(x))
-        x = self.sigmoid(self.output(x))
-        return x
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import mlflow
+import mlflow.sklearn
 
 
 class Deep(nn.Module):
@@ -100,12 +92,12 @@ def model_train(model, X_train, y_train, X_val, y_val):
     return best_acc, model
 
 
-def train_x_val():
+def train_x_val(mlflow_tracking_uri):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f'training the model on {device}')
 
-    X = pd.DataFrame(load("X.npy"))
-    y = pd.DataFrame(load("y.npy"))
+    X = pd.DataFrame(load("X_train.npy"))
+    y = pd.DataFrame(load("y_train.npy"))
 
     split_number = int(environ.get('split_number', '2'))
     sss = StratifiedKFold(n_splits=split_number, random_state=None, shuffle=False)
@@ -134,13 +126,20 @@ def train_x_val():
     now = datetime.datetime.now()
     date = now.strftime("%Y%m%d%H%M")
 
-    mlflow.set_tracking_uri('https://mlflow-server-redhat-ods-applications.apps.io.mos-paas.de.eviden.com')
-    mlflow.set_experiment(f"torch_model")
+    mlflow.set_tracking_uri(mlflow_tracking_uri)
+    mlflow.set_experiment(f"torch_model_experiment")
     with mlflow.start_run(run_name=f"torch_model-{date}") as run:
-        mlflow.pytorch.log_model(model, "torch_model")
+        print('artifact uri:', mlflow.get_artifact_uri())
+        mlflow.pytorch.log_model(model_d, "torch_model", registered_model_name="torch_model")
         
-    torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "best_deep_model.onnx")
+        client = mlflow.MlflowClient()
+        model_version = client.get_latest_versions(name="torch_model")[0].version
+        client.set_registered_model_alias("torch_model", "challenger", model_version)
+        
+        mlflow.end_run()
+        
+    torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "torch_model.onnx")
 
 
 if __name__ == '__main__':
-    train_x_val()
+    train_x_val(mlflow_tracking_uri='http://mlflow-v4-redhat-ods-applications.apps.io.mos-paas.de.eviden.com')

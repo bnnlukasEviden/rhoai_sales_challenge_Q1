@@ -4,13 +4,14 @@ from numpy import save
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.utils import resample
 
 
 def preprocess_data():
     print('preprocessing data')
 
     df = pd.read_csv('raw_data.csv')
-    print(df)
 
     df.dropna(subset=['RainTomorrow'], inplace=True)
 
@@ -42,12 +43,28 @@ def preprocess_data():
     df = pd.DataFrame(imp_mean.fit_transform(df), columns = df.columns)
 
     df = df.sample(frac=1)
+    
+    print(df["target"].value_counts())
+    
+    rain_df = df[df["target"] == 1]
+    no_rain_df  = df[df["target"] == 0]
 
-    X = df.drop(columns=["target"])
-    y = df["target"]
+    no_rain_df_downsampled = resample(no_rain_df,
+                 replace=True,
+                 n_samples=len(rain_df),
+                 random_state=42)
+    
+    df_downsampled = pd.concat([no_rain_df_downsampled, rain_df])
 
-    save("X.npy", X)
-    save("y.npy", y)
+    print(df_downsampled["target"].value_counts())
+
+    
+    X_train, X_eval, y_train, y_eval = train_test_split(df_downsampled.drop(columns=["target"]), df_downsampled["target"], test_size=0.2, random_state=42)
+
+    save("X_train.npy", X_train)
+    save("y_train.npy", y_train)
+    save("X_eval.npy", X_eval)
+    save("y_eval.npy", y_eval)
 
 
 if __name__ == '__main__':
