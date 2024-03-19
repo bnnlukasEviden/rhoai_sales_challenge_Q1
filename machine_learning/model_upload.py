@@ -8,9 +8,9 @@ s3_access_key = environ.get('AWS_ACCESS_KEY_ID')
 s3_secret_key = environ.get('AWS_SECRET_ACCESS_KEY')
 s3_bucket_name = environ.get('AWS_S3_BUCKET')
 
-model_object_prefix = 'torch_model'
+model_object_prefix = 'rain_prediction_model'
 
-def upload_model(model_object_prefix='model', version=''):
+def upload_model(model_object_prefix='rain_prediction_model', version=''):
     
     with open("output.txt", "r") as file:
         string_from_file = file.read()
@@ -26,6 +26,7 @@ def upload_model(model_object_prefix='model', version=''):
     _do_upload(s3_client, model_object_name)
 
     if string_from_file == 'new_champion':   
+        print(string_from_file)
         model_object_name_champion = _generate_model_name(
             model_object_prefix, 'champion'
         )
@@ -55,7 +56,7 @@ def _timestamp():
 def _do_upload(s3_client, object_name):
     print(f'uploading model to {object_name}')
     try:
-        s3_client.upload_file('torch_model.onnx', s3_bucket_name, object_name)
+        s3_client.upload_file('rain_prediction_model.onnx', s3_bucket_name, object_name)
     except:
         print(f'S3 upload to bucket {s3_bucket_name} at {s3_endpoint_url} failed!')
         raise

@@ -20,7 +20,8 @@
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [
-                "torch_model.onnx"
+                "rain_prediction_model.onnx",
+                "model_uri.txt"
               ],
               "env_vars": [],
               "kubernetes_pod_annotations": [],
@@ -408,10 +409,10 @@
           "runtime": "Data Science Pipelines",
           "pipeline_defaults": {
             "kubernetes_shared_mem_size": {},
-            "kubernetes_pod_labels": [],
             "mounted_volumes": [],
-            "kubernetes_tolerations": [],
+            "kubernetes_pod_labels": [],
             "kubernetes_pod_annotations": [],
+            "kubernetes_tolerations": [],
             "env_vars": [],
             "kubernetes_secrets": [
               {

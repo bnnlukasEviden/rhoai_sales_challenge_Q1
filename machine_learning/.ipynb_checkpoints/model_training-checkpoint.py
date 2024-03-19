@@ -127,18 +127,22 @@ def train_x_val(mlflow_tracking_uri):
     date = now.strftime("%Y%m%d%H%M")
 
     mlflow.set_tracking_uri(mlflow_tracking_uri)
-    mlflow.set_experiment(f"torch_model_experiment")
-    with mlflow.start_run(run_name=f"torch_model-{date}") as run:
+    mlflow.set_experiment(f"rain_prediction_model_experiment")
+    with mlflow.start_run(run_name=f"rain_prediction_model-{date}") as run:
         print('artifact uri:', mlflow.get_artifact_uri())
-        mlflow.pytorch.log_model(model_d, "torch_model", registered_model_name="torch_model")
+        mlflow.pytorch.log_model(model_d, "rain_prediction_model", registered_model_name="rain_prediction_model")
         
         client = mlflow.MlflowClient()
-        model_version = client.get_latest_versions(name="torch_model")[0].version
-        client.set_registered_model_alias("torch_model", "challenger", model_version)
+        model_version = client.get_latest_versions(name="rain_prediction_model")[0].version
+        model_uri = client.get_latest_versions(name="rain_prediction_model")[0].source
+        client.set_registered_model_alias("rain_prediction_model", "challenger", model_version)
         
         mlflow.end_run()
         
-    torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "torch_model.onnx")
+    torch.onnx.export(best_model_deep, torch.randn(363, 121, requires_grad=True).to(device), "rain_prediction_model.onnx")
+    
+    with open("model_uri.txt", "w") as file:
+        file.write(model_uri)
 
 
 if __name__ == '__main__':

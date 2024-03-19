@@ -3,7 +3,7 @@ import onnx
 
 def validate_model():
     print('validating model using onnx model-checking')
-    onnx_model_deep = onnx.load("torch_model.onnx")
+    onnx_model_deep = onnx.load("rain_prediction_model.onnx")
     onnx.checker.check_model(onnx_model_deep)
     print('models validated')
 

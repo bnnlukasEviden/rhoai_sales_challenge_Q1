@@ -12,6 +12,7 @@ import torch.optim as optim
 import tqdm
 import datetime
 import mlflow
+import re
 
 from sklearn.model_selection import StratifiedKFold
 
@@ -36,6 +37,9 @@ def model_evaluate_metrics(y, y_pred, metrics):
 
 
 def model_evaluation(mlflow_tracking_uri='http://mlflow-v4-redhat-ods-applications.apps.io.mos-paas.de.eviden.com'):
+    with open("model_uri.txt", "r") as file:
+        new_model_uri = file.read()
+        
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
     X_eval = pd.DataFrame(load("X_eval.npy"))
@@ -59,15 +63,15 @@ def model_evaluation(mlflow_tracking_uri='http://mlflow-v4-redhat-ods-applicatio
             for model in model_versions:
                 for key in all_model_names_aliases[model_name].keys():       
                     if model.version == all_model_names_aliases[model_name][key]:
-                        eval_model_uris[model.source] = all_model_names_aliases[model_name]
+                        eval_model_uris[f"{model.source}/{model.version}"] = all_model_names_aliases[model_name]
     eval_metric = {}
     print(eval_model_uris)
     
-    prev_champion_uri = None
+    uri_pattern = r'(.*)/\d+$'
 
-    for eval_model_uri in eval_model_uris.keys():
-        if 'champion' in eval_model_uris[eval_model_uri]:
-            prev_champion_uri = eval_model_uri
+    for eval_model_uri_long in eval_model_uris.keys():
+        
+        eval_model_uri = re.sub(uri_pattern, r'\1', eval_model_uri_long)
         
         model_name_long = eval_model_uri.split('/')[-1]
         model_name = '-'.join(model_name_long.split('-')[:-2])
@@ -92,27 +96,33 @@ def model_evaluation(mlflow_tracking_uri='http://mlflow-v4-redhat-ods-applicatio
 
             for k, v in metrics.items():
                 mlflow.log_metric(k, v)
-            eval_metric[eval_model_uri] = metrics['accuracy_score']
+            eval_metric[eval_model_uri_long] = metrics['accuracy_score']
 
             mlflow.end_run()
 
-    for uri in eval_model_uris.keys():
-        client.delete_registered_model_alias(uri.split('/')[-1], next(iter(eval_model_uris[uri])))
+    for uri_long in eval_model_uris.keys():
+        uri = re.sub(uri_pattern, r'\1', uri_long)
+        client.delete_registered_model_alias(uri.split('/')[-1], next(iter(eval_model_uris[uri_long])))
 
-    champion_model_uri = max(eval_metric, key=eval_metric.get)
+    champion_model_uri_long = max(eval_metric, key=eval_metric.get)
+    print(eval_metric)
+    print(champion_model_uri_long)
+    version_pattern = r'/(\d+)$'
+    match = re.search(version_pattern, champion_model_uri_long)
+    champion_version = match.group(1)
+    champion_model_uri = re.sub(uri_pattern, r'\1', champion_model_uri_long)
 
-    client = mlflow.MlflowClient()
-    model_version = client.get_latest_versions(name=champion_model_uri.split('/')[-1])[0].version
-    client.set_registered_model_alias(champion_model_uri.split('/')[-1], "champion", model_version)
-    
+    # client = mlflow.MlflowClient()
+    # model_version = client.get_latest_versions(name=champion_model_uri.split('/')[-1])[0].version
+    # print(model_version)
+    client.set_registered_model_alias(champion_model_uri.split('/')[-1], "champion", champion_version)
+    print(new_model_uri)
+    print(champion_model_uri)
     with open("output.txt", "w") as file:
-        if prev_champion_uri is not None and champion_model_uri is not None:
-            if prev_champion_uri == champion_model_uri:
-                file.write("keep_champion")
-            else:
-                file.write("new_champion")
-        else:
+        if new_model_uri == champion_model_uri:
             file.write("new_champion")
+        else:
+            file.write("keep_champion")
 
 
 if __name__ == '__main__':
